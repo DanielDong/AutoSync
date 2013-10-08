@@ -30,7 +30,7 @@ public class AutoSync {
 	// A list of connected neighboring nodes with form of ip:port
 	public static List<String> neighborNodesStr;
 	// Public listening port
-	public static final int PORT = 8086;
+	public static final int PORT = 9000;
 	// Acceptor to accept remote connections from PORT
 	public static IoAcceptor acceptor;
 	// Periodically query neighboring node for their neighboring nodes.
