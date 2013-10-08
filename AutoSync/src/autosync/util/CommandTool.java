@@ -43,6 +43,7 @@ public class CommandTool extends IoHandlerAdapter{
 			IoSessionConfig config = connector.getSessionConfig();
 			config.setMaxReadBufferSize(4096);
 			config.setMinReadBufferSize(4096);
+			connector.setHandler(new CommandTool());
 			
 			String remoteNodeIp = args[0];
 			String port = args[1];
@@ -87,6 +88,8 @@ public class CommandTool extends IoHandlerAdapter{
 					}
 					input = s.nextLine();
 				}
+				session.close(true);
+				
 			}
 			
 		}
