@@ -76,6 +76,7 @@ public class CommandTool extends IoHandlerAdapter{
 					// Current command to be executed.
 					int cmd = Integer.valueOf(input);
 					switch(cmd){
+					// Send query request to remote node
 					case AutoSyncProtocol.CL_QUERY_REQ_NEIGHBOR:
 						msg = new Message();
 						msg.setType(AutoSyncProtocol.CL_QUERY_REQ_NEIGHBOR);

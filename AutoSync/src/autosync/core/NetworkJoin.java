@@ -42,7 +42,7 @@ public class NetworkJoin extends IoHandlerAdapter{
 		IoSessionConfig config = AutoSync.acceptor.getSessionConfig();
 		config.setMaxReadBufferSize(4096);
 		config.setMinReadBufferSize(4096);
-//		AutoSync.acceptor.setHandler(new NetworkJoin());
+		AutoSync.acceptor.setHandler(new NetworkJoin());
 		AutoSync.acceptor.addListener(new IoServiceListener(){
 
 			@Override
@@ -67,6 +67,7 @@ public class NetworkJoin extends IoHandlerAdapter{
 			@Override
 			public void sessionCreated(IoSession session) throws Exception {
 				InetSocketAddress inetSockAddr = (InetSocketAddress)session.getRemoteAddress();
+				// Get IP:PORT of remote node.
 				String remoteNodeId = inetSockAddr.getAddress().getHostAddress() + ":" + inetSockAddr.getPort();
 				LOGGER.info("Session created, new connection received. from ACCEPTOR side." + remoteNodeId);
 				
@@ -92,9 +93,8 @@ public class NetworkJoin extends IoHandlerAdapter{
 		} catch (IOException e) {
 			LOGGER.error("Fail to bind to local port: " + AutoSync.PORT);
 		}
-		
-		
 	}
+	
 	/**
 	 * Connect current node to remote node specified by <i>addr</i>.
 	 * @param addr The remote node to be connected.
@@ -211,6 +211,7 @@ public class NetworkJoin extends IoHandlerAdapter{
 		
 		switch(msgType){
 			case AutoSyncProtocol.QUERY_RES_NEIGHBOR: 
+			case AutoSyncProtocol.CL_QUERY_RES_NEIGHBOR:
 				// Get a list of neighboring nodes of node specified by session.
 				for(int i = 1; i < records.length; i ++){
 					String remoteNode = records[i];
@@ -223,22 +224,19 @@ public class NetworkJoin extends IoHandlerAdapter{
 						AutoSync.neighborNodesStr.add(remoteNode);
 					}
 				}
-				
-				
 				break;
 			case AutoSyncProtocol.QUERY_REQ_NEIGHBOR:
-				
+			case AutoSyncProtocol.CL_QUERY_REQ_NEIGHBOR:	
 				// Send back the ip:port of neighboring nodes of current node to node specified by session.
 				Message newMsg = new Message();
 				newMsg.setType(AutoSyncProtocol.QUERY_RES_NEIGHBOR);
-				for(String nodeId: AutoSync.neighborNodesStr){
+				for(String curNodeId: AutoSync.neighborNodesStr){
 					// Exclude node specified by session.
-					if(nodeId != remoteNodeId){
-						newMsg.addRecord(nodeId);
+					if(curNodeId != remoteNodeId && curNodeId != AutoSync.nodeId){
+						newMsg.addRecord(curNodeId);
 					}
 				}
 				session.write(newMsg.toString());
-				
 				break;
 			default:
 				break;

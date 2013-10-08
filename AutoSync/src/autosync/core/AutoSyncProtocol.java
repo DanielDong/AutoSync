@@ -13,4 +13,6 @@ public class AutoSyncProtocol {
 	public static final int CL_QUERY_REQ_NEIGHBOR = 41;
 	public static final int CL_QUERY_RES_NEIGHBOR = 42;
 	
+	public static final int CL_STOP_QUERY = 51;
+	
 }

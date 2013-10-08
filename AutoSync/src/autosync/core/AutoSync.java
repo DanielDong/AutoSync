@@ -33,12 +33,15 @@ public class AutoSync {
 	public static final int PORT = 9000;
 	// Acceptor to accept remote connections from PORT
 	public static IoAcceptor acceptor;
+	// Periodically query neighboring node for their neighboring nodes.
+	public static Timer timer;
 	
 	public static void initialize(){
 		neighborNodes = Collections.synchronizedList(new ArrayList<NeighborNode>());
 		fileMetaList = Collections.synchronizedList(new ArrayList<FileMetaData>());
 		neighborNodesStr = Collections.synchronizedList(new ArrayList<String>());
 		acceptor = null;
+		timer = null;
 		try {
 			nodeId = InetAddress.getLocalHost().getHostAddress() + ":" + PORT;
 		} catch (UnknownHostException e) {
@@ -54,10 +57,12 @@ public class AutoSync {
 	public static void main(String[] args) {
 		// Initialize application
 		AutoSync.initialize();
+		LOGGER.error("=================Usage Instruction=================\n" +
+                     "> java AutoSync [IP PORT]");
 		
 		if(args.length < 2){
-			LOGGER.error("=================Usage Instruction=================\n" +
-					           "> java AutoSync IP PORT.");
+			// Start listening on PORT for incoming connections.
+			NetworkJoin.startListen();
 		}else{
 			// Start listening on PORT for incoming connections.
 			NetworkJoin.startListen();
@@ -71,7 +76,7 @@ public class AutoSync {
 			
 			// Query neighboring connected nodes periodically.
 			TimerTask queryTimerTask = new QueryNodeTimerTask();
-			Timer timer = new Timer();
+			timer = new Timer();
 			timer.schedule(queryTimerTask, 1000, 2000);
 		}
 	}
