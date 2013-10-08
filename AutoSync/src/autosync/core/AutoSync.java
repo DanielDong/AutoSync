@@ -57,7 +57,7 @@ public class AutoSync {
 	public static void main(String[] args) {
 		// Initialize application
 		AutoSync.initialize();
-		LOGGER.error("=================Usage Instruction=================\n" +
+		LOGGER.info("=================Usage Instruction=================\n" +
                      "> java AutoSync [IP PORT]");
 		
 		if(args.length < 2){
